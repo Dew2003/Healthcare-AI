@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 
 # Import functions from the backend
-from backend import detect_emotion, get_motivational_content
+from disease_backend import detect_emotion, get_motivational_content
 
 def main():
     st.title("Emotion Detection App")
