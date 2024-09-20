@@ -1,0 +1,41 @@
+import streamlit as st
+import backend  # Import your backend module
+
+# Streamlit frontend
+st.title("Disease Detection and Assistance System")
+
+# Take input from user
+st.write("Enter symptoms separated by commas (e.g., itching, skin_rash, fatigue):")
+symptoms_input = st.text_input("Symptoms")
+
+# Button to trigger prediction
+if st.button("Predict"):
+    if symptoms_input:
+        # Clean and split symptoms
+        user_symptoms = [s.strip() for s in symptoms_input.split(',')]
+        try:
+            predicted_disease = backend.get_predicted_value(user_symptoms)
+            dis_des, precautions, medications, rec_diet, workout = backend.helper(predicted_disease)
+
+            # Display results
+            st.subheader(f"Predicted Disease: {predicted_disease}")
+            st.write(f"**Description**: {dis_des}")
+            
+            st.write("### Precautions")
+            for pre in precautions[0]:
+                st.write(f"- {pre}")
+
+            st.write("### Medications")
+            for med in medications:
+                st.write(f"- {med}")
+
+            st.write("### Recommended Diet")
+            for diet in rec_diet:
+                st.write(f"- {diet}")
+
+            st.write("### Suggested Workout")
+            st.write(workout)
+        except KeyError:
+            st.error("Some symptoms might be misspelled or not recognized. Please try again.")
+    else:
+        st.error("Please enter symptoms to predict the disease.")

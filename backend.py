@@ -1,28 +1,43 @@
-# backend.py
-
 import numpy as np
-from fer import FER
+import pandas as pd
+import pickle
 
-# Load emotion detection model
-emotion_detector = FER()
+# Load datasets
+sym_des = pd.read_csv("datasets/symtoms_df.csv")
+precautions = pd.read_csv("datasets/precautions_df.csv")
+workout = pd.read_csv("datasets/workout_df.csv")
+description = pd.read_csv("datasets/description.csv")
+medications = pd.read_csv('datasets/medications.csv')
+diets = pd.read_csv("datasets/diets.csv")
 
-# Motivational quotes
-motivational_quotes = [
-    "Keep smiling, because life is a beautiful thing!",
-    "Happiness is the best makeup.",
-    "Every day may not be good, but there is something good in every day.",
-    "Stay positive, work hard, make it happen!"
-]
+# Load the trained model
+svc = pickle.load(open('models/svc.pkl', 'rb'))
 
-def detect_emotion(image):
-    """Detect the dominant emotion from the image."""
-    emotions = emotion_detector.detect_emotions(image)
-    if emotions:
-        top_emotion = emotions[0]['emotions']
-        dominant_emotion = max(top_emotion, key=top_emotion.get)
-        return dominant_emotion
-    return None
+# Symptoms and diseases dictionary (use existing dictionaries)
+symptoms_dict = {'itching': 0, 'skin_rash': 1, ... }  # Your full symptoms dictionary here
+diseases_list = {15: 'Fungal infection', 4: 'Allergy', ...}  # Your full diseases dictionary here
 
-def get_motivational_content():
-    """Return a random motivational quote."""
-    return np.random.choice(motivational_quotes)
+# Helper function to retrieve disease information
+def helper(dis):
+    desc = description[description['Disease'] == dis]['Description']
+    desc = " ".join([w for w in desc])
+
+    pre = precautions[precautions['Disease'] == dis][['Precaution_1', 'Precaution_2', 'Precaution_3', 'Precaution_4']]
+    pre = [col for col in pre.values]
+
+    med = medications[medications['Disease'] == dis]['Medication']
+    med = [med for med in med.values]
+
+    die = diets[diets['Disease'] == dis]['Diet']
+    die = [die for die in die.values]
+
+    wrkout = workout[workout['disease'] == dis]['workout']
+
+    return desc, pre, med, die, wrkout
+
+# Model Prediction function
+def get_predicted_value(patient_symptoms):
+    input_vector = np.zeros(len(symptoms_dict))
+    for item in patient_symptoms:
+        input_vector[symptoms_dict[item]] = 1
+    return diseases_list[svc.predict([input_vector])[0]]
