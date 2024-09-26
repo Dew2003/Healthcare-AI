@@ -71,7 +71,7 @@ st.markdown("<h1>Health Care AI</h1>", unsafe_allow_html=True)
 
 section = st.sidebar.radio(
     "Select an option",
-    ("🩺 Disease Detection", "😊 Emotion Detection", "Health Assistant AI")
+    ("🩺 Disease Detection", "😊 Emotion Detection", "🤖 Health Assistant AI")
 )
 
 if section == "🩺 Disease Detection":
@@ -155,7 +155,7 @@ elif section == "😊 Emotion Detection":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-elif section == "Health Assistant AI":
+elif section == "🤖 Health Assistant AI":
     st.markdown("<h2>💬 Health Assistance via AI</h2>", unsafe_allow_html=True)
 
     user_query = st.text_input("Ask any health-related question (e.g., symptoms, treatments, fitness advice):")
