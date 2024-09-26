@@ -1,28 +1,46 @@
+# assistant.py
+
+import requests
+
 def get_health_assistance(query, category):
-    """
-    Uses a generative AI model (e.g., GPT) to provide assistance on health-related questions based on categories.
-    """
-    # Defining prompt templates for each category
-    prompts = {
-        "Symptoms & Diagnosis": f"Provide a health diagnosis or medical information based on these symptoms or condition: {query}.",
-        "Nutrition & Diet": f"Provide diet and nutritional advice based on this query: {query}.",
-        "Mental Health": f"Provide mental health support and advice for the following issue: {query}.",
-        "Fitness & Exercise": f"Provide fitness or workout advice for the following query: {query}.",
+    API_KEY = "d2206f3d828044788d555ff324064895"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "api-key": API_KEY,
     }
 
-    # Choose the prompt based on the category selected by the user
-    chosen_prompt = prompts.get(category, f"Assist with the following health-related query: {query}")
+    # Craft the prompt with the user's query and category
+    prompt = f"Provide health assistance for this query: '{query}' under the category '{category}'."
 
+    # Payload for the request
+    payload = {
+        "messages": [
+            {
+                "role": "system",
+                "content": "You are a helpful health assistant AI."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        "temperature": 0.7,
+        "top_p": 0.95,
+        "max_tokens": 800
+    }
+
+    ENDPOINT = "https://asst.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
+
+    # Send request
     try:
-        # Call OpenAI's API
-        response = openai.Completion.create(
-            engine="text-davinci-003",  # Using GPT-3.5 for example
-            prompt=chosen_prompt,
-            max_tokens=150,
-            temperature=0.7
-        )
-        # Extract response text
-        answer = response.choices[0].text.strip()
-        return answer
-    except Exception as e:
-        return f"Error: {str(e)}"
+        response = requests.post(ENDPOINT, headers=headers, json=payload)
+        response.raise_for_status()  # Check for HTTP errors
+    except requests.RequestException as e:
+        raise SystemExit(f"Failed to make the request. Error: {e}")
+
+    # Parse the JSON response and extract the AI's message
+    response_json = response.json()
+    ai_message = response_json['choices'][0]['message']['content']
+
+    return ai_message

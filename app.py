@@ -3,21 +3,19 @@ import numpy as np
 from PIL import Image
 import disease_backend  
 import emotion_backend 
-import assistant 
-
+from assistant import get_health_assistance
+ 
 # CSS for styling
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
     
-    /* General body style */
     .stApp {
         background: linear-gradient(120deg, #ffffff 0%, #f3f4f6 100%);
         font-family: 'Poppins', sans-serif;
         color: #2E4053;
     }
 
-    /* Main title styling */
     h1, h2 {
         color: #1F618D;
         text-align: center;
@@ -26,7 +24,6 @@ st.markdown("""
         font-size: 2.5rem;
     }
 
-    /* Subheading styling */
     h3 {
         color: #154360;
         margin-top: 30px;
@@ -34,7 +31,6 @@ st.markdown("""
         font-size: 1.8rem;
     }
 
-    /* Card for section containers */
     .card {
         background-color: #ffffff;
         border-radius: 10px;
@@ -43,7 +39,6 @@ st.markdown("""
         margin-bottom: 30px;
     }
 
-    /* Button styling */
     .stButton button {
         background-color: #1F618D !important;
         color: white !important;
@@ -52,14 +47,12 @@ st.markdown("""
         font-size: 16px;
     }
 
-    /* Sidebar styling */
     sidebar .sidebar-content {
-        background: linear-gradient(100deg, #ffffff 0%, #f3f4f6 100%) !important; /* Add !important */
+        background: linear-gradient(100deg, #ffffff 0%, #f3f4f6 100%) !important;
         padding: 20px;
-        border-radius: 10px; /* Optional: to match card style */
+        border-radius: 10px;
     }
 
-    /* Text input field styling */
     .stTextInput input {
         border-radius: 8px;
         border: 1px solid #BDC3C7;
@@ -67,27 +60,22 @@ st.markdown("""
         font-size: 16px;
     }
 
-    /* General paragraph text */
     p {
         color: black;
         font-size: 16px;
     }
-    
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<h1>Health Care AI</h1>", unsafe_allow_html=True)
 
-# Sidebar for selecting between Emotion Detection and Disease Detection
 section = st.sidebar.radio(
     "Select an option",
-    ("🩺 Disease Detection", "😊 Emotion Detection","Health Assistant AI"),
+    ("🩺 Disease Detection", "😊 Emotion Detection", "Health Assistant AI")
 )
 
-# Disease Detection Section
 if section == "🩺 Disease Detection":
     st.markdown("<h2>Disease Detection</h2>", unsafe_allow_html=True)
-    #st.markdown("<div class='card'>", unsafe_allow_html=True)
     
     symptoms_input = st.text_input("Enter symptoms separated by commas (e.g., itching, skin rash, fatigue):")
 
@@ -99,7 +87,6 @@ if section == "🩺 Disease Detection":
                     predicted_disease = disease_backend.get_predicted_value(user_symptoms)
                     dis_des, precautions, medications, rec_diet, workout = disease_backend.helper(predicted_disease)
 
-                    # Display disease prediction results
                     st.markdown(f"<h3>Predicted Disease: {predicted_disease}</h3>", unsafe_allow_html=True)
                     st.write(f"**Description**: {dis_des}")
 
@@ -119,12 +106,8 @@ if section == "🩺 Disease Detection":
         else:
             st.error("Please enter symptoms to predict the disease.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# Emotion Detection Section
 elif section == "😊 Emotion Detection":
     st.markdown("<h2>Emotion Detection and Motivation</h2>", unsafe_allow_html=True)
-    #st.markdown("<div class='card'>", unsafe_allow_html=True)
     
     camera_option = st.radio("Select Input Method", ("Upload Image", "Use Camera"))
 
@@ -152,25 +135,31 @@ elif section == "😊 Emotion Detection":
         else:
             st.error("Could not detect any emotion. Please try again.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
 elif section == "Health Assistant AI":
-    # Adding a new section to the Streamlit app for health assistance
     st.markdown("<h2>💬 Health Assistance via AI</h2>", unsafe_allow_html=True)
 
-    # User inputs their query
     user_query = st.text_input("Ask any health-related question (e.g., symptoms, treatments, fitness advice):")
 
-    # User selects the type of health assistance they need
     category = st.radio(
         "What kind of advice are you looking for?",
         ("Symptoms & Diagnosis", "Nutrition & Diet", "Mental Health", "Fitness & Exercise")
     )
 
+    # Clear previous AI response when new input is provided
+    if user_query or category:
+        st.session_state.ai_response = None
+
+    # Initialize session state for AI response
+    if "ai_response" not in st.session_state:
+        st.session_state.ai_response = None
+
+    # If the button is clicked
     if st.button("💡 Get AI Assistance"):
         if user_query and category:
             with st.spinner("Thinking..."):
-                ai_response = get_health_assistance(user_query, category)
-                st.markdown(f"**AI Response:**\n\n{ai_response}")
+                st.session_state.ai_response = get_health_assistance(user_query, category)
         else:
             st.error("Please enter a question and select a category.")
 
+    if st.session_state.ai_response:
+        st.markdown(f"**AI Response:**\n\n{st.session_state.ai_response}")
