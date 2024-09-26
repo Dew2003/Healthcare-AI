@@ -109,6 +109,9 @@ if section == "🩺 Disease Detection":
 elif section == "😊 Emotion Detection":
     st.markdown("<h2>Emotion Detection and Motivation</h2>", unsafe_allow_html=True)
     
+    # Card container for emotion detection
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
+
     camera_option = st.radio("Select Input Method", ("Upload Image", "Use Camera"))
 
     if camera_option == "Upload Image":
@@ -125,15 +128,32 @@ elif section == "😊 Emotion Detection":
     if 'image_array' in locals() and image_array is not None:
         st.image(image_array, caption='Captured Image', use_column_width=True)
 
-        with st.spinner('Analyzing Emotion...'):
+        # Detect the emotion
+        with st.spinner('Analyzing Emotion...'):  # Progress spinner for emotion detection
             dominant_emotion = emotion_backend.detect_emotion(image_array)
 
         if dominant_emotion:
             st.markdown(f"<h3>Detected Emotion: {dominant_emotion.capitalize()}</h3>", unsafe_allow_html=True)
-            quote = emotion_backend.get_motivational_content()
-            st.success(f"**Motivational Quote:** {quote}")
+            
+            # Get enhanced recommendations from emotion_backend (pass Giphy API key if needed)
+            recommendations = emotion_backend.enhanced_emotion_recommendations(dominant_emotion, giphy_api_key="your_giphy_api_key")
+
+            # Display the motivational quote
+            st.success(f"**Motivational Quote:** {recommendations['quote']}")
+
+            # Display recommended YouTube video
+            if recommendations['video_title'] and recommendations['video_url']:
+                st.write(f"**Recommended Video:** [{recommendations['video_title']}]({recommendations['video_url']})")
+                st.video(recommendations['video_url'])
+
+            # Display the GIF
+            if recommendations['gif_url']:
+                st.image(recommendations['gif_url'], caption="Here's a GIF for you!", use_column_width=True)
+
         else:
             st.error("Could not detect any emotion. Please try again.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 elif section == "Health Assistant AI":
     st.markdown("<h2>💬 Health Assistance via AI</h2>", unsafe_allow_html=True)
