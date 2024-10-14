@@ -10,10 +10,10 @@ def get_health_assistance(query, category):
         "api-key": API_KEY,
     }
 
-    # Craft the prompt with the user's query and category
+    
     prompt = f"Provide health assistance for this query: '{query}' under the category '{category}'."
 
-    # Payload for the request
+    
     payload = {
         "messages": [
             {

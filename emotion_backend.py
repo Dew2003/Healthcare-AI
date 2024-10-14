@@ -44,9 +44,7 @@ motivational_quotes = {
 }
 
 def detect_emotion(image_array):
-    """
-    Detect the dominant emotion in the image using the FER model.
-    """
+   
     emotions = emotion_detector.detect_emotions(image_array)
     if emotions:
         top_emotion = emotions[0]['emotions']
@@ -55,15 +53,11 @@ def detect_emotion(image_array):
     return None
 
 def get_motivational_content(emotion):
-    """
-    Returns a motivational quote based on the detected emotion.
-    """
+    
     return np.random.choice(motivational_quotes.get(emotion, motivational_quotes['neutral']))
 
 def get_youtube_music_video(emotion):
-    """
-    Get a funny or relevant YouTube music video based on the detected emotion.
-    """
+   
     emotion_to_search_query = {
         "happy": "funny videos",
         "sad": "uplifting music",
@@ -84,9 +78,7 @@ def get_youtube_music_video(emotion):
     return None, None
 
 def get_giphy_gif(emotion, api_key):
-    """
-    Get a relevant GIF based on the detected emotion using Giphy API.
-    """
+    
     emotion_to_search_query = {
         "happy": "funny",
         "sad": "cheer up",
@@ -108,16 +100,13 @@ def get_giphy_gif(emotion, api_key):
     return None
 
 def enhanced_emotion_recommendations(emotion, giphy_api_key):
-    """
-    Get a motivational quote, YouTube music video, and GIF based on the detected emotion.
-    """
-    # Get a motivational quote
+    
+    
     quote = get_motivational_content(emotion)
     
-    # Get a relevant YouTube video based on the emotion
+
     video_title, video_url = get_youtube_music_video(emotion)
     
-    # Get a GIF based on the emotion
     gif_url = get_giphy_gif(emotion,"LiEMMadcsQ2D6IagiZnpWBBJzjo8oFR9")
     
     return {
