@@ -6,10 +6,27 @@ from PIL import Image
 import disease_backend  
 import emotion_backend 
 from assistant import get_health_assistance
+
+
+path = "a1.json"
+with open(path,"r") as file: 
+    url = json.load(file) 
+
+
+
  
 
 
 st.title("Health Care AI")
+st_lottie(url, 
+    reverse=True, 
+    height=100, 
+    width=100, 
+    speed=0.1, 
+    loop=True, 
+    quality='high', 
+    key='a1'
+)    
 st.snow()
 
 section = st.sidebar.radio(
