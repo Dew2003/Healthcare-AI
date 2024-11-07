@@ -5,7 +5,10 @@ import numpy as np
 from PIL import Image
 import disease_backend  
 import emotion_backend 
+from report import analyze_report
 from assistant import get_health_assistance
+import requests
+
 
 
 path = "a1.json"
@@ -27,11 +30,11 @@ st_lottie(url,
     quality='high', 
     key='a1'
 )    
-st.snow()
+#st.snow()
 
 section = st.sidebar.radio(
     "Select an option",
-    ("🤖 Health Assistant AI", "😊 Emotion Detection", "🩺 Disease Detection")
+    ("🤖 Health Assistant AI", "😊 Emotion Detection", "🩺 Disease Detection","🩺Report Analysis")
 )
 
 if section == "🤖 Health Assistant AI":
@@ -144,3 +147,22 @@ elif section == "🩺 Disease Detection":
                     st.error("Some symptoms might be misspelled or not recognized. Please try again.")
         else:
             st.error("Please enter symptoms to predict the disease.")
+elif section == "🩺Report Analysis":
+    st.title("Medical Report Analysis")
+
+    # File uploader to allow user to upload the report
+    uploaded_file = st.file_uploader("Upload a medical report", type=["jpg", "jpeg", "png"])
+
+    # If a file is uploaded, process it
+    if uploaded_file is not None:
+        st.image(uploaded_file, caption="Uploaded Report", use_column_width=True)
+
+        # Analyze the report using the backend function
+        with st.spinner("Analyzing the report..."):
+            diagnosis, error = analyze_report(uploaded_file)
+
+        if error:
+            st.error(error)
+        elif diagnosis:
+            st.write("Diagnosis:")
+            st.write(diagnosis)

@@ -3,7 +3,8 @@
 import requests
 
 def get_health_assistance(query, category):
-    API_KEY = "d2206f3d828044788d555ff324064895"
+    API_KEY="7eff5afad45744488b4c01d1c0291ae5"
+    #API_KEY = "d2206f3d828044788d555ff324064895"
     
     headers = {
         "Content-Type": "application/json",
@@ -30,7 +31,8 @@ def get_health_assistance(query, category):
         "max_tokens": 800
     }
 
-    ENDPOINT = "https://asst.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
+    #ENDPOINT = "https://asst.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
+    ENDPOINT = "https://hreport.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-08-01-preview"
 
     # Send request
     try:
