@@ -34,14 +34,14 @@ def get_health_assistance(query, category):
     #ENDPOINT = "https://asst.openai.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-15-preview"
     ENDPOINT = "https://hreport.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-08-01-preview"
 
-    # Send request
+    
     try:
         response = requests.post(ENDPOINT, headers=headers, json=payload)
         response.raise_for_status()  # Check for HTTP errors
     except requests.RequestException as e:
         raise SystemExit(f"Failed to make the request. Error: {e}")
 
-    # Parse the JSON response and extract the AI's message
+   
     response_json = response.json()
     ai_message = response_json['choices'][0]['message']['content']
 
