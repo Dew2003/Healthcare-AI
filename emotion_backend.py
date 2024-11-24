@@ -3,13 +3,13 @@ import numpy as np
 from ytmusicapi import YTMusic
 import requests
 
-# Load emotion detection model
+
 emotion_detector = FER()
 
-# Initialize YTMusic API
+
 ytmusic = YTMusic()
 
-# List of motivational quotes
+
 motivational_quotes = {
     "happy": [
         "Keep smiling, because life is beautiful!",
